@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
+use App\Http\Resources\PostResource;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
@@ -13,7 +14,7 @@ class PostController extends Controller
         $posts = $request->user()->posts;
 
         return response()->json([
-            'posts' => $posts,
+            'posts' => PostResource::collection($posts),
         ]);
     }
     public function store(StorePostRequest $request)
@@ -22,7 +23,7 @@ class PostController extends Controller
 
         return response()->json([
             'message' => 'Post created successfully',
-            'post' => $post,
+            'post' => new PostResource($post),
         ], 201);
     }
 
@@ -34,6 +35,8 @@ class PostController extends Controller
         ], 403);
     }
 
-    return response()->json(['post' => $post]);
+    return response()->json([
+        'post' => new PostResource($post)
+    ]);
 }
 }
